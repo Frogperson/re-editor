@@ -839,11 +839,13 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
   @override
   bool hitTest(BoxHitTestResult result, { required Offset position }) {
     bool hitTarget = false;
+    MouseCursor? spanCursor;
     if (size.contains(position)) {
       result.add(BoxHitTestEntry(this, position));
       final CodeLineRenderParagraph? paragraph = _findDisplayRenderParagraph(position + paintOffset);
       final InlineSpan? span = paragraph?.getSpanForPosition(position - paragraph.offset + paintOffset);
       if (span is MouseTrackerAnnotationTextSpan) {
+        spanCursor = span.cursor;
         result.add(HitTestEntry(_MouseTrackerAnnotationTextSpan(
           id: paragraph!.index,
           rects: paragraph.getRangeRects(paragraph.getRangeForSpan(span)).map((rect) {
@@ -857,7 +859,7 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
       if (_chunkIndicators.where((chunk) => chunk.canExpand && chunk.region.contains(position)).isNotEmpty) {
         _cursor = SystemMouseCursors.click;
       } else {
-        _cursor = SystemMouseCursors.text;
+        _cursor = spanCursor ?? SystemMouseCursors.text;
       }
       hitTarget = true;
     }
