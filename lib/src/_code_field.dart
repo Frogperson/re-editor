@@ -844,8 +844,10 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
       final CodeLineRenderParagraph? paragraph = _findDisplayRenderParagraph(position + paintOffset);
       final InlineSpan? span = paragraph?.getSpanForPosition(position - paragraph.offset + paintOffset);
       MouseCursor? spanCursor;
-      if (span is MouseTrackerAnnotationTextSpan) {
+      if (span is TextSpan && span.cursor != MouseCursor.defer) {
         spanCursor = span.cursor;
+      }
+      if (span is MouseTrackerAnnotationTextSpan) {
         result.add(HitTestEntry(_MouseTrackerAnnotationTextSpan(
           id: paragraph!.index,
           rects: paragraph.getRangeRects(paragraph.getRangeForSpan(span)).map((rect) {
